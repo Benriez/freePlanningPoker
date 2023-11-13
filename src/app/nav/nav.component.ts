@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalAddUserLinkComponent } from '../modal-add-user-link/modal-add-user-link.component';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -11,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 export class NavComponent {
   constructor(
     private dialog: MatDialog,
-    private toastr: ToastrService
+    
   ) {}
 
   add_user():void{
@@ -22,8 +21,8 @@ export class NavComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle actions after the modal is closed (if needed)
-      console.log('Dialog closed');
-      this.toastr.success('Invitation link copied to clipboard', 'Success!');
+      console.log('Dialog closed: ', result);
+      
     });
   }
   

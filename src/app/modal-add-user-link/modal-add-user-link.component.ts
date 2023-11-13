@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-modal-add-user-link',
   templateUrl: './modal-add-user-link.component.html',
@@ -12,7 +12,8 @@ export class ModalAddUserLinkComponent {
   
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<ModalAddUserLinkComponent>
+    private dialogRef: MatDialogRef<ModalAddUserLinkComponent>,
+    private toastr: ToastrService
   ) {}
 
   get title(): string {
@@ -32,6 +33,7 @@ export class ModalAddUserLinkComponent {
       // Successfully copied
       console.log('Invitation link copied to clipboard:', this.invitationLink);
       this.close();
+      this.toastr.success('Invitation link copied to clipboard', 'Success!');
     })
     .catch((error) => {
       // Handle any errors
