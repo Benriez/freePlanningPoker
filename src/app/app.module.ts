@@ -9,19 +9,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
-
+import { ModalAddUserLinkComponent } from './modal-add-user-link/modal-add-user-link.component';
+import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
-    GameComponent
+    GameComponent,
+    ModalAddUserLinkComponent
   ],
   imports: [
     BrowserModule,
     MatIconModule,
     MatInputModule,
     MatTooltipModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

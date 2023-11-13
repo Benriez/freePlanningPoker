@@ -13,10 +13,14 @@ export class GameComponent implements AfterViewInit {
   selectedCardElement!: HTMLElement;
   gameStatus : any;
 
-  private socketSubscription!: Subscription;
+  socketSubscription!: Subscription;
   public messageReceived: string | undefined;
 
-  constructor(private gs: ElementRef, private renderer: Renderer2, private websocketService: WebsocketService) {}
+  constructor(
+    private gs: ElementRef, 
+    private renderer: Renderer2, 
+    private websocketService: WebsocketService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
