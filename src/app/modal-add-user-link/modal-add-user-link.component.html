@@ -1,7 +1,8 @@
-<div style="display: flex;">
+<div style="display: flex; margin: 1rem 2rem; border-radius: 0.5rem;">
   <div style="width: 100%;">
     <h3>{{ title }}</h3>
     <p>{{ url }}</p>
+    <button mat-button (click)="copyToClipboard()" style="width: 100%; margin-top: 1rem;">Copy invitation link</button>
   </div>
-  <button mat-button (click)="close()">X</button>
+  <button mat-button (click)="close()" style="position: absolute; top: 0; right: 0;">X</button>
 </div>

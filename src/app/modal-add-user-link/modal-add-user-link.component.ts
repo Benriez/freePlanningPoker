@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-modal-add-user-link',
@@ -7,7 +7,13 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./modal-add-user-link.component.css']
 })
 export class ModalAddUserLinkComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  invitationLink = 'http://127.0.0.1:8000/#########/';
+  
+  
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<ModalAddUserLinkComponent>
+  ) {}
 
   get title(): string {
     return this.data.title;
@@ -18,6 +24,18 @@ export class ModalAddUserLinkComponent {
   }
 
   close(): void {
-    // You can perform additional actions before closing the modal
+    this.dialogRef.close();
+  }
+  copyToClipboard(): void {
+    navigator.clipboard.writeText(this.invitationLink)
+    .then(() => {
+      // Successfully copied
+      console.log('Invitation link copied to clipboard:', this.invitationLink);
+      this.close();
+    })
+    .catch((error) => {
+      // Handle any errors
+      console.error('Unable to copy to clipboard:', error);
+    });
   }
 }

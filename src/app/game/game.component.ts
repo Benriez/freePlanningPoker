@@ -12,9 +12,10 @@ export class GameComponent implements AfterViewInit {
   players = ["Player 1", "Player 2", "Player 3"];
   selectedCardElement!: HTMLElement;
   gameStatus : any;
+  group_id: any;
 
   socketSubscription!: Subscription;
-  public messageReceived: string | undefined;
+  public messagetype: string | undefined;
 
   constructor(
     private gs: ElementRef, 
@@ -26,8 +27,15 @@ export class GameComponent implements AfterViewInit {
     this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
     this.socketSubscription = this.websocketService.openConnection().subscribe({
       next: (message: string) => {
-        this.messageReceived = message;
-        console.log(message);
+        const parsedMessage = JSON.parse(message);
+  
+        this.messagetype = parsedMessage.message;
+
+        if(this.messagetype == "ws-connection-established"){
+          this.group_id = parsedMessage.group_name;
+          console.log("Group ID: " + this.group_id);  
+        }
+        // if (message ==)
       },
       error: (error: string) => {
         console.error(error);

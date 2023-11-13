@@ -1,4 +1,13 @@
+@import 'ngx-toastr/toastr';
 /* You can add global styles to this file, and also import other style files */
-
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.custom-toastr-position {
+  position: absolute;
+  width: 20rem;
+  top: 55px;
+  right: 10px;
+  padding: .8rem 1.6rem;
+  border-radius: .5rem;
+}

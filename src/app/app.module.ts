@@ -11,6 +11,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalAddUserLinkComponent } from './modal-add-user-link/modal-add-user-link.component';
 import { MatDialogModule } from '@angular/material/dialog';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,7 +27,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatInputModule,
     MatTooltipModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      toastClass: 'custom-toastr-position', // Apply custom styling
+      // Other configuration options...
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
