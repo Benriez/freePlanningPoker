@@ -1,0 +1,27 @@
+<div class="game-wrapper">
+  <div id="gameStatus" class="game-status">
+    <button mat-button disabled (click)="revealCards()">Pick youre Cards!</button>
+  </div>
+
+
+  <div>
+    <p style="text-align: center;user-select: none;">Choose youre card:</p>
+    <div class="scroll-selection-wrapper">
+      <div class="scroll-selection-row">
+        <div *ngFor="let number of fibonaci_numbers" class="scroll-selection"  #cardElement (click)="select_card(cardElement, number)" >{{ number }}</div>    
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="text-align: center;user-select: none;">Players (0/{{players.length}}):</p>
+    <div class="scroll-wrapper">
+      <div class="scroll-selection-row">
+        <div *ngFor="let player of players" class="scroll-selection-player">{{ player }}</div>    
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
