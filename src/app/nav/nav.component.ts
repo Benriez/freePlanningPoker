@@ -22,7 +22,7 @@ export class NavComponent implements OnInit{
 
   add_user():void{
     const dialogRef = this.dialog.open(ModalAddUserLinkComponent, {
-      data: { title: 'Invite Players', url: 'http://127.0.0.1:8000/'+this.groupId+'/' },
+      data: { title: 'Invite Players', url: 'http://localhost:4200/'+this.groupId+'/' },
       width: '500px',
     });
 

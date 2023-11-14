@@ -1,13 +1,15 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
-import { WebsocketService } from '../websocket.service';
+import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, Renderer2, inject,Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { WebsocketService } from '../websocket.service';
 import { StoreService } from '../store.service';
+
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements AfterViewInit {
+export class GameComponent implements OnInit, AfterViewInit {
   fibonaci_numbers = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89 , '?', '☕️'];
   players = ["Player 1", "Player 2", "Player 3"];
   selectedCardElement!: HTMLElement;
@@ -17,13 +19,19 @@ export class GameComponent implements AfterViewInit {
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
 
+
+
   constructor(
     private gs: ElementRef, 
     private renderer: Renderer2, 
     private websocketService: WebsocketService,
-    private storeService: StoreService
+    private storeService: StoreService,
+    private route: ActivatedRoute
   ) {}
 
+  ngOnInit(): void {
+
+  }
   ngAfterViewInit(): void {
     this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
     this.socketSubscription = this.websocketService.openConnection().subscribe({
@@ -72,6 +80,7 @@ export class GameComponent implements AfterViewInit {
       const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
       if (buttonLabelElement) {
         this.renderer.setProperty(buttonLabelElement, 'textContent', 'Waiting for other players...');
+        
       }
     }
 
