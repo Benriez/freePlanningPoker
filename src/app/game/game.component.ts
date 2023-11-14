@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
 import { WebsocketService } from '../websocket.service';
 import { Subscription } from 'rxjs';
-
+import { StoreService } from '../store.service';
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -21,6 +21,7 @@ export class GameComponent implements AfterViewInit {
     private gs: ElementRef, 
     private renderer: Renderer2, 
     private websocketService: WebsocketService,
+    private storeService: StoreService
   ) {}
 
   ngAfterViewInit(): void {
@@ -34,6 +35,7 @@ export class GameComponent implements AfterViewInit {
         if(this.messagetype == "ws-connection-established"){
           this.group_id = parsedMessage.group_name;
           console.log("Group ID: " + this.group_id);  
+          this.storeService.updateGroupId(this.group_id);
         }
         // if (message ==)
       },
