@@ -14,7 +14,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   players = ["Player 1", "Player 2", "Player 3"];
   selectedCardElement!: HTMLElement;
   gameStatus : any;
-  group_id: any;
+  group_id: any= null;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -30,7 +30,11 @@ export class GameComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-
+    const urlParams = new URLSearchParams(window.location.search);
+    // Access specific parameter values
+    let stringGID = urlParams.get('group_id');
+    this.group_id = stringGID?.slice(0, -1);
+    console.log('groupId: ' + this.group_id);
   }
   ngAfterViewInit(): void {
     this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
@@ -41,7 +45,9 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.messagetype = parsedMessage.message;
 
         if(this.messagetype == "ws-connection-established"){
-          this.group_id = parsedMessage.group_name;
+          if (!this.group_id){
+            this.group_id = parsedMessage.group_name;
+          }
           console.log("Group ID: " + this.group_id);  
           this.storeService.updateGroupId(this.group_id);
         }

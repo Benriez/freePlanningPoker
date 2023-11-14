@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { GameComponent } from './game/game.component';
 
 const routes: Routes = [
-  { path: 'jo', component: GameComponent },
+  { path: ':group_id', component: GameComponent },
   // Add more routes as needed
 ];
 

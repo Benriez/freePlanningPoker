@@ -8,7 +8,7 @@ import { StoreService } from '../store.service';
   styleUrls: ['./modal-add-user-link.component.css']
 })
 export class ModalAddUserLinkComponent implements OnInit {
-  invitationLink = 'http://localhost:4200/';
+  invitationLink = 'http://localhost:4200/?group_id=';
   groupId!: string;
   
   constructor(
