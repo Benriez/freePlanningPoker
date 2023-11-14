@@ -1,20 +1,26 @@
-import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, Renderer2, inject,Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, Renderer2, HostListener} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { WebsocketService } from '../websocket.service';
 import { StoreService } from '../store.service';
+import { v4 as uuidv4 } from 'uuid';
 
+interface Player {
+  user_id: typeof uuidv4;
+  username: string;
+}
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit, AfterViewInit {
-  fibonaci_numbers = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89 , '?', '☕️'];
-  players = ["Player 1", "Player 2", "Player 3"];
+  cards = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89 , '?', '☕️'];
+  username: string = "Player 1";
+  players: Player[] = [];
   selectedCardElement!: HTMLElement;
   gameStatus : any;
   group_id: any= null;
+  user_id: any = uuidv4();
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -25,33 +31,75 @@ export class GameComponent implements OnInit, AfterViewInit {
     private gs: ElementRef, 
     private renderer: Renderer2, 
     private websocketService: WebsocketService,
-    private storeService: StoreService,
-    private route: ActivatedRoute
+    private storeService: StoreService
   ) {}
 
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    console.log('Page is about to reload. Execute code here.');
+    console.log(this.players);
+    // Uncomment the following line if you want to show a confirmation dialog
+    //$event.returnValue = true;
+  }
+
   ngOnInit(): void {
-    const urlParams = new URLSearchParams(window.location.search);
-    // Access specific parameter values
-    let stringGID = urlParams.get('group_id');
-    this.group_id = stringGID?.slice(0, -1);
-    console.log('groupId: ' + this.group_id);
+    this.user_id = uuidv4();
+    // localStorage.setItem('group_id', 'yourValue');
+    // localStorage.getItem('yourKey');
+
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      let stringGID = urlParams.get('group_id');
+      this.group_id = stringGID?.slice(0, -1);
+    } catch (error) {}
+
+
   }
   ngAfterViewInit(): void {
     this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
     this.socketSubscription = this.websocketService.openConnection().subscribe({
       next: (message: string) => {
         const parsedMessage = JSON.parse(message);
-  
         this.messagetype = parsedMessage.message;
 
+        //-----------------------------------------------------------------------
         if(this.messagetype == "ws-connection-established"){
+          // check if url contains group_id
           if (!this.group_id){
-            this.group_id = parsedMessage.group_name;
+            this.group_id = parsedMessage.group_id;
           }
-          console.log("Group ID: " + this.group_id);  
-          this.storeService.updateGroupId(this.group_id);
+           
+          this.storeService.updateGroupId(this.group_id);          
+          this.websocketService.sendMessage(JSON.stringify({
+            message: "user-joins-group", 
+            group_id: this.group_id,
+            username: this.username,
+            user_id: this.user_id
+          }));
+          
+          
+          // this.players.push(this.username);
+      
         }
-        // if (message ==)
+        if(this.messagetype == "ws-user-joins-group"){    
+          parsedMessage.players.forEach((player: Player) => {
+            const newPlayer: Player = { user_id: player.user_id, username: player.username };
+            this.players.push(newPlayer);
+          });
+
+          console.log("Players: " + this.players);  
+ 
+
+        }
+
+
+
+
+
+
+
+
+
       },
       error: (error: string) => {
         console.error(error);
@@ -71,6 +119,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   
   select_card(cardElement: HTMLElement, value: any){
+    // remove selected class from previous card
     if (cardElement != this.selectedCardElement){
       try {
         this.selectedCardElement.classList.remove("scroll-selection-selected");
