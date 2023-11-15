@@ -99,6 +99,10 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.user_id = localStorage.getItem('user_id');
       console.log('locastorage checked: ', this.group_id, this.user_id);
     }
+
+    try{
+      this.username = localStorage.getItem('username') || "Player";
+    } catch (error) {}
     
 
 
@@ -127,6 +131,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           
           localStorage.setItem('group_id', this.group_id);
           localStorage.setItem('user_id', this.user_id);
+          
         }
 
         if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players"){    
@@ -140,7 +145,6 @@ export class GameComponent implements OnInit, AfterViewInit {
         }
 
         if(this.messagetype == "ws_user_update"){
-          console.log('eeeeeeyyyy')
           this.build_players(parsedMessage.players)
 
         }

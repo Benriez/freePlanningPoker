@@ -38,6 +38,7 @@ export class ModalChangeNameComponent implements OnInit {
   changeUsername(username: string): void {
     console.log('New username:', username);
     this.storeService.updateUsername(username);
+    localStorage.setItem('username', username);
     this.dialogRef.close();
   }
 
