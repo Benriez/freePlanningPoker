@@ -44,8 +44,6 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.user_id = uuidv4();
-    // localStorage.setItem('group_id', 'yourValue');
-    // localStorage.getItem('yourKey');
 
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -63,7 +61,11 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
       catch (error) {}
 
+    } else {
+      this.user_id = localStorage.getItem('user_id');
+      console.log('locastorage checked: ', this.group_id, this.user_id);
     }
+    
 
 
   }
@@ -97,9 +99,12 @@ export class GameComponent implements OnInit, AfterViewInit {
         }
         if(this.messagetype == "ws-user-joins-group"){    
           console.log('parsedMessage: ', parsedMessage);
+          this.players = [];
           parsedMessage.players.forEach((player: Player) => {
             const newPlayer: Player = { user_id: player.user_id, username: player.username };
             this.players.push(newPlayer);
+            // this.players = [...this.players, newPlayer]
+            console.log("Players: " + player.user_id)
           });
 
           console.log("Players: " + this.players);  
