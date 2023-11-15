@@ -54,6 +54,18 @@ export class GameComponent implements OnInit, AfterViewInit {
     } catch (error) {}
 
 
+    //check localstorage for group_id and user_id
+    if (!this.group_id){
+      try {
+        this.group_id = localStorage.getItem('group_id');
+        this.user_id = localStorage.getItem('user_id');
+        console.log('locastorage checked: ', this.group_id, this.user_id);
+      }
+      catch (error) {}
+
+    }
+
+
   }
   ngAfterViewInit(): void {
     this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
@@ -67,6 +79,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           // check if url contains group_id
           if (!this.group_id){
             this.group_id = parsedMessage.group_id;
+            
           }
            
           this.storeService.updateGroupId(this.group_id);          
@@ -77,11 +90,13 @@ export class GameComponent implements OnInit, AfterViewInit {
             user_id: this.user_id
           }));
           
-          
-          // this.players.push(this.username);
+          localStorage.setItem('group_id', this.group_id);
+          localStorage.setItem('user_id', this.user_id);
+
       
         }
         if(this.messagetype == "ws-user-joins-group"){    
+          console.log('parsedMessage: ', parsedMessage);
           parsedMessage.players.forEach((player: Player) => {
             const newPlayer: Player = { user_id: player.user_id, username: player.username };
             this.players.push(newPlayer);
