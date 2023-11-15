@@ -58,6 +58,8 @@
   
 }
 
+
+
 @media (max-width: 768px) {
   .scroll-selection-wrapper {
     /* Add styles for container when viewport width is greater than or equal to 768px */

@@ -15,7 +15,7 @@ interface Player {
 })
 export class GameComponent implements OnInit, AfterViewInit {
   cards = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89 , '?', '☕️'];
-  username: string = "Player 1";
+  username: string = "Player";
   players: Player[] = [];
   selectedCardElement!: HTMLElement;
   gameStatus : any;
@@ -98,13 +98,10 @@ export class GameComponent implements OnInit, AfterViewInit {
       
         }
         if(this.messagetype == "ws-user-joins-group"){    
-          console.log('parsedMessage: ', parsedMessage);
           this.players = [];
           parsedMessage.players.forEach((player: Player) => {
             const newPlayer: Player = { user_id: player.user_id, username: player.username };
             this.players.push(newPlayer);
-            // this.players = [...this.players, newPlayer]
-            console.log("Players: " + player.user_id)
           });
 
           console.log("Players: " + this.players);  

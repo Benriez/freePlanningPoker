@@ -8,7 +8,9 @@
     <p style="text-align: center;user-select: none;">Choose youre card:</p>
     <div class="scroll-selection-wrapper">
       <div class="scroll-selection-row">
-        <div *ngFor="let card of cards" class="scroll-selection"  #cardElement (click)="select_card(cardElement, card)" >{{ card }}</div>    
+        <div *ngFor="let card of cards" class="scroll-selection"  #cardElement (click)="select_card(cardElement, card)" >
+          {{ card }}
+        </div>    
       </div>
     </div>
   </div>
@@ -17,7 +19,9 @@
     <p style="text-align: center;user-select: none;">Players ({{players.length}}):</p>
     <div class="scroll-selection-wrapper">
       <div class="scroll-selection-row">
-        <div *ngFor="let player of players" class="scroll-selection-player">{{ player }}</div>    
+        <div *ngFor="let player of players" class="scroll-selection-player" [ngStyle]="{'background-color': player.user_id === this.user_id ? 'green' : 'transparent'}">
+          {{ player.username }}
+        </div>    
       </div>
     </div>
   </div>
