@@ -57,6 +57,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.user_id = uuidv4();
     this.storeService.username$.subscribe((data) => {
       if (this.username != data){
         //update players
@@ -79,7 +80,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       
       console.log('username changed: ', this.username);
     });
-    this.user_id = uuidv4();
+    
 
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -89,24 +90,26 @@ export class GameComponent implements OnInit, AfterViewInit {
 
 
     //check localstorage for group_id and user_id
+    console.log('id: ', this.user_id);
     if (!this.group_id){
       try {
         this.group_id = localStorage.getItem('group_id');
         this.user_id = localStorage.getItem('user_id');
-        console.log('locastorage checked: ', this.group_id, this.user_id);
+    
       }
       catch (error) {}
 
     } else {
-      this.user_id = localStorage.getItem('user_id');
-      console.log('locastorage checked: ', this.group_id, this.user_id);
+      let local_user = localStorage.getItem('user_id');
+      if (local_user != 'null')
+        this.user_id = local_user;
+  
     }
 
     try{
       this.username = localStorage.getItem('username') || "Player";
     } catch (error) {}
     
-
 
   }
   ngAfterViewInit(): void {
@@ -130,6 +133,8 @@ export class GameComponent implements OnInit, AfterViewInit {
             username: this.username,
             user_id: this.user_id
           }));
+
+          console.log('this user id: ', this.user_id);
           
           localStorage.setItem('group_id', this.group_id);
           localStorage.setItem('user_id', this.user_id);
