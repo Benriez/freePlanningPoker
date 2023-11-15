@@ -17,6 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { ModalChangeNameComponent } from './modal-change-name/modal-change-name.component';
 
 
 
@@ -25,7 +26,8 @@ import { ToastrModule } from 'ngx-toastr';
     AppComponent,
     NavComponent,
     GameComponent,
-    ModalAddUserLinkComponent
+    ModalAddUserLinkComponent,
+    ModalChangeNameComponent
   ],
   imports: [
     BrowserModule,

@@ -3,6 +3,9 @@ import { Subscription } from 'rxjs';
 import { WebsocketService } from '../websocket.service';
 import { StoreService } from '../store.service';
 import { v4 as uuidv4 } from 'uuid';
+import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalChangeNameComponent } from '../modal-change-name/modal-change-name.component';
 
 interface Player {
   user_id: typeof uuidv4;
@@ -32,18 +35,48 @@ export class GameComponent implements OnInit, AfterViewInit {
     private gs: ElementRef, 
     private renderer: Renderer2, 
     private websocketService: WebsocketService,
-    private storeService: StoreService
+    private storeService: StoreService,
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {}
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
     console.log('Page is about to reload. Execute code here.');
-    console.log(this.players);
+
+    this.websocketService.sendMessage(JSON.stringify({
+      message: "user-leaves-group", 
+      group_id: this.group_id,
+      username: this.username,
+      user_id: this.user_id
+    }));
     // Uncomment the following line if you want to show a confirmation dialog
     //$event.returnValue = true;
   }
 
   ngOnInit(): void {
+    this.storeService.username$.subscribe((data) => {
+      if (this.username != data){
+        //update players
+        this.username = data;
+        this.players.forEach((player: Player) => {
+          if (player.user_id == this.user_id){
+            player.username = this.username;
+          }
+        })
+
+        //update websocket
+        this.websocketService.sendMessage(JSON.stringify({
+          message: "user-changes-username", 
+          group_id: this.group_id,
+          username: this.username,
+          user_id: this.user_id
+        }));
+        
+      }
+      
+      console.log('username changed: ', this.username);
+    });
     this.user_id = uuidv4();
 
     try {
@@ -84,7 +117,6 @@ export class GameComponent implements OnInit, AfterViewInit {
             this.group_id = parsedMessage.group_id;
             
           }
-           
           this.storeService.updateGroupId(this.group_id);          
           this.websocketService.sendMessage(JSON.stringify({
             message: "user-joins-group", 
@@ -97,39 +129,26 @@ export class GameComponent implements OnInit, AfterViewInit {
           localStorage.setItem('user_id', this.user_id);
         }
 
-
-        if(this.messagetype == "ws-user-joins-group"){    
-          this.players = [];
-          parsedMessage.players.forEach((player: Player) => {
-            const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
-            this.players.push(newPlayer);
-          });
+        if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players"){    
+          this.build_players(parsedMessage.players)
         }
 
+        if(this.messagetype == "ws_user_leaves_group"){
+          this.build_players(parsedMessage.players)
+          // this.toastr.info(parsedMessage.username + " has left the group", "Info");
 
-        if(this.messagetype == "ws_waiting_for_players"){    
-          console.log('updating players')
-          this.players = [];
-          parsedMessage.players.forEach((player: Player) => {
-            const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
-            this.players.push(newPlayer);
-          });
+        }
+
+        if(this.messagetype == "ws_user_update"){
+          console.log('eeeeeeyyyy')
+          this.build_players(parsedMessage.players)
+
         }
 
         if(this.messagetype == "ws_start_game"){    
           console.log('lets fucking gooo')
-          this.players = [];
-          parsedMessage.players.forEach((player: Player) => {
-            const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
-            this.players.push(newPlayer);
-          });
+          this.build_players(parsedMessage.players)
         }
-
-
-
-
-
-
 
 
 
@@ -144,11 +163,18 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
 
- 
-
   disconnect(): void {
     this.websocketService.closeConnection();
   }
+
+  build_players(parsedPlayers:any){
+    this.players = [];
+    parsedPlayers.forEach((player: Player) => {
+      const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
+      this.players.push(newPlayer);
+    })
+  }
+
 
   
   select_card(cardElement: HTMLElement, value: any){
@@ -181,6 +207,15 @@ export class GameComponent implements OnInit, AfterViewInit {
       card: value
     }));
 
+  }
+
+  changeUsername(userId: typeof uuidv4){
+    if (userId === this.user_id) {
+      const dialogRef = this.dialog.open(ModalChangeNameComponent, {
+        data: { title: 'Change Username', username: this.username },
+        width: '500px',
+      });
+    }
   }
 
   revealCards(){

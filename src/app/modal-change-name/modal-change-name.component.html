@@ -1,0 +1,11 @@
+<div style="display: flex; padding: 1rem 2rem; border-radius: 0.5rem;">
+  <div style="width: 100%;">
+    <h3 style="user-select: none;">{{ title }}</h3>
+
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <input matInput #usernameInput placeholder="{{ username }}" class="custom-input">
+    </mat-form-field>
+    <button mat-button (click)="changeUsername(usernameInput.value)" style="width: 100%; margin-top: 1rem; color: #fff;">Save Changes</button>
+  </div>
+  <button mat-button (click)="close()" style="position: absolute; top: 0; right: 0;color: #fff;">X</button>
+</div>

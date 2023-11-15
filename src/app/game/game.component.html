@@ -23,7 +23,8 @@
           [ngStyle]="{
             'border': player.user_id === this.user_id ? '1px solid green' : 'transparent',
             'background-color': player.card ? 'green' : 'transparent'
-          }">
+          }"
+          (click)="changeUsername(player.user_id)">
           {{ player.username }}
         </div>    
       </div>

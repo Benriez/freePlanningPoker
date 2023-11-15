@@ -1,0 +1,12 @@
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: red!important;
+}
+
+.custom-input::placeholder, .custom-input {
+  color: #fff!important; /* Change to your desired border color */
+}
+
+::ng-deep .custom-input {
+  border-color: #fff!important; /* Change to your desired border color */
+}

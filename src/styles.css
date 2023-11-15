@@ -11,3 +11,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   padding: .8rem 1.6rem;
   border-radius: .5rem;
 }
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color:  #0e1011!important
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #0d0d0d!important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  color: #fff!important;
+}
