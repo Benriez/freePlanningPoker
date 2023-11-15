@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface Player {
   user_id: typeof uuidv4;
   username: string;
+  card?: number;
 }
 @Component({
   selector: 'app-game',
@@ -100,7 +101,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         if(this.messagetype == "ws-user-joins-group"){    
           this.players = [];
           parsedMessage.players.forEach((player: Player) => {
-            const newPlayer: Player = { user_id: player.user_id, username: player.username };
+            const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
             this.players.push(newPlayer);
           });
 
@@ -158,6 +159,12 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     buttonElement.disabled = false;
     this.gameStatus.style.backgroundColor = "rgb(0, 212, 51)";
+
+    this.websocketService.sendMessage(JSON.stringify({
+      message: "user-card-selected",
+      user_id: this.user_id, 
+      card: value
+    }));
 
   }
 
