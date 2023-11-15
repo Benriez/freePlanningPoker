@@ -95,19 +95,34 @@ export class GameComponent implements OnInit, AfterViewInit {
           
           localStorage.setItem('group_id', this.group_id);
           localStorage.setItem('user_id', this.user_id);
-
-      
         }
+
+
         if(this.messagetype == "ws-user-joins-group"){    
           this.players = [];
           parsedMessage.players.forEach((player: Player) => {
             const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
             this.players.push(newPlayer);
           });
+        }
 
-          console.log("Players: " + this.players);  
- 
 
+        if(this.messagetype == "ws_waiting_for_players"){    
+          console.log('updating players')
+          this.players = [];
+          parsedMessage.players.forEach((player: Player) => {
+            const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
+            this.players.push(newPlayer);
+          });
+        }
+
+        if(this.messagetype == "ws_start_game"){    
+          console.log('lets fucking gooo')
+          this.players = [];
+          parsedMessage.players.forEach((player: Player) => {
+            const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
+            this.players.push(newPlayer);
+          });
         }
 
 

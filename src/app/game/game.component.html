@@ -19,7 +19,11 @@
     <p style="text-align: center;user-select: none;">Players ({{players.length}}):</p>
     <div class="scroll-selection-wrapper">
       <div class="scroll-selection-row">
-        <div *ngFor="let player of players" class="scroll-selection-player" [ngStyle]="{'border': player.user_id === this.user_id ? '1px solid green' : 'transparent'}">
+        <div *ngFor="let player of players" class="scroll-selection-player" 
+          [ngStyle]="{
+            'border': player.user_id === this.user_id ? '1px solid green' : 'transparent',
+            'background-color': player.card ? 'green' : 'transparent'
+          }">
           {{ player.username }}
         </div>    
       </div>
