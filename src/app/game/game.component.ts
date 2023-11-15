@@ -25,6 +25,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   gameStatus : any;
   group_id: any= null;
   user_id: any = uuidv4();
+  countdown: number = 5; // Set the initial countdown value
+  countdownInterval: any;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -152,6 +154,11 @@ export class GameComponent implements OnInit, AfterViewInit {
         if(this.messagetype == "ws_start_game"){    
           console.log('lets fucking gooo')
           this.build_players(parsedMessage.players)
+
+          
+          // set interval updating the 
+          this.startCountdown();
+          // this.build_players(parsedMessage.players)
         }
 
 
@@ -177,6 +184,34 @@ export class GameComponent implements OnInit, AfterViewInit {
       const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
       this.players.push(newPlayer);
     })
+  }
+
+  startCountdown(): void {
+    const buttonElement = this.gameStatus.querySelector('button');
+    const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
+    this.countdownInterval = setInterval(() => {
+      // Update the countdown value
+      this.countdown--;
+
+      // Update the button label
+      this.renderer.setProperty(
+        buttonLabelElement,
+        'textContent',
+        `Showing in: ${this.countdown}`
+      );
+
+      // Check if the countdown reaches zero
+      if (this.countdown <= 0) {
+        // Perform actions when the countdown reaches zero
+        this.stopCountdown();
+      }
+    }, 1000); // Update the countdown every 1000 milliseconds (1 second)
+  }
+
+  stopCountdown(): void {
+    // Stop the countdown and perform any additional actions
+    clearInterval(this.countdownInterval);
+    console.log('Countdown reached zero!');
   }
 
 
