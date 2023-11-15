@@ -8,10 +8,16 @@
 
 }
 
+#restartBtn{
+  display: none;
+}
+
 .game-status{
   border: 1px solid #fff; 
   padding: 1rem 2rem; 
   border-radius: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 

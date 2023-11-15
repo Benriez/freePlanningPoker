@@ -12,6 +12,7 @@ interface Player {
   username: string;
   card?: number;
 }
+const INITIAL_COUNTDOWN_VALUE = 5;
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -134,8 +135,6 @@ export class GameComponent implements OnInit, AfterViewInit {
             user_id: this.user_id
           }));
 
-          console.log('this user id: ', this.user_id);
-          
           localStorage.setItem('group_id', this.group_id);
           localStorage.setItem('user_id', this.user_id);
           
@@ -162,8 +161,26 @@ export class GameComponent implements OnInit, AfterViewInit {
 
           
           // set interval updating the 
-          this.startCountdown();
-          // this.build_players(parsedMessage.players)
+          this.startCountdown(parsedMessage.average);
+   
+        }
+
+        if(this.messagetype == "ws_reset_game"){    
+          const buttonElement = this.gameStatus.querySelector('button');
+          const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
+          this.renderer.setStyle(buttonLabelElement, 'font-size', '14px');
+          this.renderer.setProperty(buttonLabelElement, 'textContent', 'Pick youre Cards!');
+          const restartBtn = document.getElementById('restartBtn');
+          restartBtn?.style.setProperty('display', 'none');
+          this.gameStatus.style.backgroundColor = "transparent";
+      
+          try {
+            this.selectedCardElement.classList.remove("scroll-selection-selected");
+          } catch (error) {}
+
+          // reset players value
+          this.build_players(parsedMessage.players)
+
         }
 
 
@@ -191,13 +208,16 @@ export class GameComponent implements OnInit, AfterViewInit {
     })
   }
 
-  startCountdown(): void {
+  startCountdown(average:any): void {
+    console.log('start countdown')
     const buttonElement = this.gameStatus.querySelector('button');
     const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
+    clearInterval(this.countdownInterval);
+    this.countdown = INITIAL_COUNTDOWN_VALUE;
+
     this.countdownInterval = setInterval(() => {
       // Update the countdown value
       this.countdown--;
-
       // Update the button label
       this.renderer.setProperty(
         buttonLabelElement,
@@ -208,15 +228,19 @@ export class GameComponent implements OnInit, AfterViewInit {
       // Check if the countdown reaches zero
       if (this.countdown <= 0) {
         // Perform actions when the countdown reaches zero
-        this.stopCountdown();
+        this.stopCountdown(buttonLabelElement, average);
       }
     }, 1000); // Update the countdown every 1000 milliseconds (1 second)
   }
 
-  stopCountdown(): void {
+  stopCountdown(buttonLabelElement:any, average:any): void {
     // Stop the countdown and perform any additional actions
     clearInterval(this.countdownInterval);
-    console.log('Countdown reached zero!');
+    this.renderer.setProperty(buttonLabelElement, 'textContent', average);
+    this.renderer.setStyle(buttonLabelElement, 'font-size', '2rem');
+
+    const restartBtn = document.getElementById('restartBtn');
+    restartBtn?.style.setProperty('display', 'block');
   }
 
 
@@ -264,5 +288,11 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   revealCards(){
     console.log("Reveal Cards");
+  }
+  resetCards(){
+    console.log("Reset Cards");
+    this.websocketService.sendMessage(JSON.stringify({
+      message: "reset-game", 
+    }));
   }
 }
