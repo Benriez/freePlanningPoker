@@ -165,12 +165,21 @@ export class GameComponent implements OnInit, AfterViewInit {
   getLocalStorage(){
     if (!this.group_id || this.group_id == 'undefined'){
       console.log('no group id')
+      console.log('user_id: ', this.user_id)
       try {
         this.group_id = localStorage.getItem('group_id');
         let local_user = localStorage.getItem('user_id');
-        if (local_user !== 'null'){
+
+        if (local_user !== null && local_user !== 'null') {
           this.user_id = local_user;
         }
+        // if (local_user == null){
+        
+        // } else {
+        //   this.user_id = local_user;
+        // }
+
+        console.log('user_id: ', this.user_id)
     
       }
       catch (error) {}
@@ -178,7 +187,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     } else {
       console.log('has group id')
       let local_user = localStorage.getItem('user_id');
-      if (local_user != 'null'){
+      if (local_user !== null && local_user !== 'null') {
         this.user_id = local_user;
       }
     }
