@@ -1,15 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+//import environment variables
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
   private socket!: WebSocket;
-  private readonly serverUrl = 'ws://127.0.0.1:8000/ws/';
+  private readonly serverUrl = '';
+
+  constructor() {
+    if (environment.production) {
+      console.log('Production environment');
+    } else {
+      console.log('Development environment');
+      console.log('WS_URL:', environment.WS_URL);
+    }
+  }
 
   public openConnection(): Observable<any> {
-    this.socket = new WebSocket(this.serverUrl);
+    this.socket = new WebSocket(environment.WS_URL);
 
     return new Observable(observer => {
       this.socket.addEventListener('message', (event: MessageEvent) => {
