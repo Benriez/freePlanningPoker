@@ -26,8 +26,10 @@ export class GameComponent implements OnInit, AfterViewInit {
   gameStatus : any;
   group_id: any= null;
   user_id: any = uuidv4();
-  countdown: number = 5; // Set the initial countdown value
+  countdown: number = 5; 
   countdownInterval: any;
+  buttonElement: any;
+  buttonLabelElement: any;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -45,8 +47,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
-    console.log('Page is about to reload. Execute code here.');
-
+    // console.log('Page is about to reload. Execute code here.');
     this.websocketService.sendMessage(JSON.stringify({
       message: "user-leaves-group", 
       group_id: this.group_id,
@@ -59,6 +60,76 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.user_id = uuidv4();
+    console.log('user_id: ', this.user_id)
+    this.subscribeToUsername()
+
+    this.parseUrl();
+    this.getLocalStorage();   
+
+
+  }
+
+  ngAfterViewInit(): void {
+    this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
+    this.buttonElement = this.gameStatus.querySelector('button');
+    this.buttonLabelElement = this.buttonElement.querySelector('.mdc-button__label');
+    
+    
+    this.socketSubscription = this.websocketService.openConnection().subscribe({
+      next: (message: string) => {
+        const parsedMessage = JSON.parse(message);
+        this.messagetype = parsedMessage.message;
+
+        //-----------------------------------------------------------------------
+        if(this.messagetype == "ws-connection-established"){
+          // check if url contains group_id
+          if (!this.group_id){
+            this.group_id = parsedMessage.group_id;
+            
+          }
+          this.storeService.updateGroupId(this.group_id);          
+          this.websocketService.sendMessage(JSON.stringify({
+            message: "user-joins-group", 
+            group_id: this.group_id,
+            username: this.username,
+            user_id: this.user_id
+          }));
+          this.setLocalStorage();          
+        }
+
+        if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players" || this.messagetype == "ws_user_leaves_group" || this.messagetype == "ws_user_update"){    
+          this.build_players(parsedMessage.players)
+        }
+
+        if(this.messagetype == "ws_start_game"){    
+          console.log('lets fucking gooo')
+          this.build_players(parsedMessage.players)
+          this.startCountdown(parsedMessage.average);
+   
+        }
+
+        if(this.messagetype == "ws_reset_game"){    
+          this.reset_ui()
+          this.build_players(parsedMessage.players)
+
+        }
+
+      },
+      error: (error: string) => {
+        console.error(error);
+      },
+      complete: () => {
+        console.log('WebSocket connection closed');
+      }
+    });
+  }
+
+
+  disconnect(): void {
+    this.websocketService.closeConnection();
+  }
+
+  subscribeToUsername(){
     this.storeService.username$.subscribe((data) => {
       if (this.username != data){
         //update players
@@ -81,123 +152,46 @@ export class GameComponent implements OnInit, AfterViewInit {
       
       console.log('username changed: ', this.username);
     });
-    
+  }
 
+  parseUrl(){
     try {
       const urlParams = new URLSearchParams(window.location.search);
       let stringGID = urlParams.get('group_id');
       this.group_id = stringGID?.slice(0, -1);
     } catch (error) {}
+  }
 
-
-    //check localstorage for group_id and user_id
-    console.log('id: ', this.user_id);
-    if (!this.group_id){
+  getLocalStorage(){
+    if (!this.group_id || this.group_id == 'undefined'){
+      console.log('no group id')
       try {
         this.group_id = localStorage.getItem('group_id');
-        this.user_id = localStorage.getItem('user_id');
+        let local_user = localStorage.getItem('user_id');
+        if (local_user !== 'null'){
+          this.user_id = local_user;
+        }
     
       }
       catch (error) {}
 
     } else {
+      console.log('has group id')
       let local_user = localStorage.getItem('user_id');
-      if (local_user != 'null')
+      if (local_user != 'null'){
         this.user_id = local_user;
-  
+      }
     }
 
     try{
       this.username = localStorage.getItem('username') || "Player";
     } catch (error) {}
-    
-
-  }
-  ngAfterViewInit(): void {
-    this.gameStatus = this.gs.nativeElement.querySelector('#gameStatus');
-    this.socketSubscription = this.websocketService.openConnection().subscribe({
-      next: (message: string) => {
-        const parsedMessage = JSON.parse(message);
-        this.messagetype = parsedMessage.message;
-
-        //-----------------------------------------------------------------------
-        if(this.messagetype == "ws-connection-established"){
-          // check if url contains group_id
-          if (!this.group_id){
-            this.group_id = parsedMessage.group_id;
-            
-          }
-          this.storeService.updateGroupId(this.group_id);          
-          this.websocketService.sendMessage(JSON.stringify({
-            message: "user-joins-group", 
-            group_id: this.group_id,
-            username: this.username,
-            user_id: this.user_id
-          }));
-
-          localStorage.setItem('group_id', this.group_id);
-          localStorage.setItem('user_id', this.user_id);
-          
-        }
-
-        if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players"){    
-          this.build_players(parsedMessage.players)
-        }
-
-        if(this.messagetype == "ws_user_leaves_group"){
-          this.build_players(parsedMessage.players)
-          // this.toastr.info(parsedMessage.username + " has left the group", "Info");
-
-        }
-
-        if(this.messagetype == "ws_user_update"){
-          this.build_players(parsedMessage.players)
-
-        }
-
-        if(this.messagetype == "ws_start_game"){    
-          console.log('lets fucking gooo')
-          this.build_players(parsedMessage.players)
-
-          
-          // set interval updating the 
-          this.startCountdown(parsedMessage.average);
-   
-        }
-
-        if(this.messagetype == "ws_reset_game"){    
-          const buttonElement = this.gameStatus.querySelector('button');
-          const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
-          this.renderer.setStyle(buttonLabelElement, 'font-size', '14px');
-          this.renderer.setProperty(buttonLabelElement, 'textContent', 'Pick youre Cards!');
-          const restartBtn = document.getElementById('restartBtn');
-          restartBtn?.style.setProperty('display', 'none');
-          this.gameStatus.style.backgroundColor = "transparent";
-      
-          try {
-            this.selectedCardElement.classList.remove("scroll-selection-selected");
-          } catch (error) {}
-
-          // reset players value
-          this.build_players(parsedMessage.players)
-
-        }
-
-
-
-      },
-      error: (error: string) => {
-        console.error(error);
-      },
-      complete: () => {
-        console.log('WebSocket connection closed');
-      }
-    });
   }
 
-
-  disconnect(): void {
-    this.websocketService.closeConnection();
+  setLocalStorage(){
+    console.log('set local storage: ', this.group_id, this.user_id, this.username)
+    localStorage.setItem('group_id', this.group_id);
+    localStorage.setItem('user_id', this.user_id);
   }
 
   build_players(parsedPlayers:any){
@@ -210,8 +204,6 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   startCountdown(average:any): void {
     console.log('start countdown')
-    const buttonElement = this.gameStatus.querySelector('button');
-    const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
     clearInterval(this.countdownInterval);
     this.countdown = INITIAL_COUNTDOWN_VALUE;
 
@@ -220,7 +212,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.countdown--;
       // Update the button label
       this.renderer.setProperty(
-        buttonLabelElement,
+        this.buttonLabelElement,
         'textContent',
         `Showing in: ${this.countdown}`
       );
@@ -228,7 +220,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       // Check if the countdown reaches zero
       if (this.countdown <= 0) {
         // Perform actions when the countdown reaches zero
-        this.stopCountdown(buttonLabelElement, average);
+        this.stopCountdown(this.buttonLabelElement, average);
       }
     }, 1000); // Update the countdown every 1000 milliseconds (1 second)
   }
@@ -252,23 +244,20 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.selectedCardElement.classList.remove("scroll-selection-selected");
       } catch (error) {}
     } 
-
+    // add selected class to new card
     this.selectedCardElement = cardElement;
     this.selectedCardElement.classList.add("scroll-selection-selected");
     
-  
-    const buttonElement = this.gameStatus.querySelector('button');
-    if (buttonElement) {
-      const buttonLabelElement = buttonElement.querySelector('.mdc-button__label');
-      if (buttonLabelElement) {
-        this.renderer.setProperty(buttonLabelElement, 'textContent', 'Waiting for other players...');
-        
+    // change button style
+    if (this.buttonElement) {
+      if (this.buttonLabelElement) {
+        this.renderer.setProperty(this.buttonLabelElement, 'textContent', 'Waiting for other players...');
       }
     }
-
-    buttonElement.disabled = false;
+    this.buttonElement.disabled = false;
     this.gameStatus.style.backgroundColor = "rgb(0, 212, 51)";
 
+    // send message to websocket
     this.websocketService.sendMessage(JSON.stringify({
       message: "user-card-selected",
       user_id: this.user_id, 
@@ -295,4 +284,18 @@ export class GameComponent implements OnInit, AfterViewInit {
       message: "reset-game", 
     }));
   }
+
+  reset_ui(){
+    this.renderer.setStyle(this.buttonLabelElement, 'font-size', '14px');
+    this.renderer.setProperty(this.buttonLabelElement, 'textContent', 'Pick youre Cards!');
+    const restartBtn = document.getElementById('restartBtn');
+    restartBtn?.style.setProperty('display', 'none');
+    this.gameStatus.style.backgroundColor = "transparent";
+
+    try {
+      this.selectedCardElement.classList.remove("scroll-selection-selected");
+    } catch (error) {}
+  }
+
+
 }

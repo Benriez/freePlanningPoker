@@ -8,19 +8,11 @@ import { environment } from '../environments/environment';
 })
 export class WebsocketService {
   private socket!: WebSocket;
-  private readonly serverUrl = '';
+  private readonly serverUrl = environment.WS_URL;
 
-  constructor() {
-    if (environment.production) {
-      console.log('Production environment');
-    } else {
-      console.log('Development environment');
-      console.log('WS_URL:', environment.WS_URL);
-    }
-  }
 
   public openConnection(): Observable<any> {
-    this.socket = new WebSocket(environment.WS_URL);
+    this.socket = new WebSocket(this.serverUrl);
 
     return new Observable(observer => {
       this.socket.addEventListener('message', (event: MessageEvent) => {
