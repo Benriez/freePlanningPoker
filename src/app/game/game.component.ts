@@ -86,7 +86,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           // check if url contains group_id
           if (!this.group_id || this.group_id){
             this.group_id = parsedMessage.group_id;
-            
+            localStorage.setItem('group_id', this.group_id);
           }
           this.storeService.updateGroupId(this.group_id);          
           this.websocketService.sendMessage(JSON.stringify({
@@ -156,31 +156,31 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   parseUrl(){
+    console.log('parse url')
     try {
       const urlParams = new URLSearchParams(window.location.search);
       let stringGID = urlParams.get('group_id');
       this.group_id = stringGID?.slice(0, -1);
+      localStorage.setItem('group_id', this.group_id);
     } catch (error) {}
   }
 
   getLocalStorage(){
     if (!this.group_id || this.group_id == 'undefined'){
       console.log('no group id')
-      console.log('user_id: ', this.user_id)
       try {
         this.group_id = localStorage.getItem('group_id');
         let local_user = localStorage.getItem('user_id');
 
         if (local_user !== null && local_user !== 'null') {
           this.user_id = local_user;
-        }
-        console.log('user_id: ', this.user_id)
-    
+        }  
       }
       catch (error) {}
 
     } else {
       console.log('has group id')
+      console.log('group id: ', this.group_id)
       let local_user = localStorage.getItem('user_id');
       if (local_user !== null && local_user !== 'null') {
         this.user_id = local_user;

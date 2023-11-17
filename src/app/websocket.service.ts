@@ -27,13 +27,10 @@ export class WebsocketService{
 
         if (this.user_id == null || this.user_id == ''){
           this.user_id = uuidv4(); 
-          console.log('new user_id: ', this.user_id);
           localStorage.setItem('user_id', this.user_id.toString());
-          console.log(this.user_id)
-          console.log('set localstorage')
         }
-        if (group_id == null){
-          group_id="joo"
+        if (group_id == null || group_id == 'undefined'){
+          group_id="default"
         }
         if (username == null){
           username="Player"
@@ -46,7 +43,7 @@ export class WebsocketService{
           group_id: group_id,
           user_id: this.user_id,
           username: username,
-          card: 3
+          card: null
         }));
         
       });
