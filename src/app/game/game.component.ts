@@ -59,8 +59,9 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.user_id = uuidv4();
-    console.log('user_id: ', this.user_id)
+    this.storeService.userId$.subscribe((data) => {
+      this.user_id = data;
+    })
     this.subscribeToUsername()
 
     this.parseUrl();
@@ -83,7 +84,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         //-----------------------------------------------------------------------
         if(this.messagetype == "ws-connection-established"){
           // check if url contains group_id
-          if (!this.group_id){
+          if (!this.group_id || this.group_id){
             this.group_id = parsedMessage.group_id;
             
           }
@@ -94,7 +95,7 @@ export class GameComponent implements OnInit, AfterViewInit {
             username: this.username,
             user_id: this.user_id
           }));
-          this.setLocalStorage();          
+          // this.setLocalStorage();          
         }
 
         if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players" || this.messagetype == "ws_user_leaves_group" || this.messagetype == "ws_user_update"){    
@@ -173,12 +174,6 @@ export class GameComponent implements OnInit, AfterViewInit {
         if (local_user !== null && local_user !== 'null') {
           this.user_id = local_user;
         }
-        // if (local_user == null){
-        
-        // } else {
-        //   this.user_id = local_user;
-        // }
-
         console.log('user_id: ', this.user_id)
     
       }
@@ -191,6 +186,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.user_id = local_user;
       }
     }
+    this.storeService.updateUserId(this.user_id); 
 
     try{
       this.username = localStorage.getItem('username') || "Player";
@@ -269,6 +265,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     // send message to websocket
     this.websocketService.sendMessage(JSON.stringify({
       message: "user-card-selected",
+      group_id: this.group_id,
       user_id: this.user_id, 
       card: value
     }));
