@@ -82,7 +82,6 @@ export class GameComponent implements OnInit, AfterViewInit {
           // check if url contains group_id
           if (!this.group_id || this.group_id){
             this.group_id = parsedMessage.group_id;
-            console.log('game group id: ', this.group_id);
             localStorage.setItem('group_id', this.group_id);
           }
           this.storeService.updateGroupId(this.group_id);        
@@ -95,7 +94,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           // this.setLocalStorage();   
         }
 
-        if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players" || this.messagetype == "ws_user_leaves_group" || this.messagetype == "ws_user_update"){    
+        if(this.messagetype == "ws_update_group" || this.messagetype == "ws_waiting_for_players" || this.messagetype == "ws_user_leaves_group" || this.messagetype == "ws_user_update"){    
           console.log(parsedMessage)    
           this.build_players(parsedMessage.players)
         }
@@ -223,10 +222,12 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   build_players(parsedPlayers:any){
     this.players = [];
-    parsedPlayers.forEach((player: Player) => {
+    console.log('build players: ', parsedPlayers);
+    Object.keys(parsedPlayers).forEach((key: string) => {
+      const player: Player = parsedPlayers[key];
       const newPlayer: Player = { user_id: player.user_id, username: player.username, card: player.card };
       this.players.push(newPlayer);
-    })
+    });
   }
 
   startCountdown(average:any): void {
