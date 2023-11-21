@@ -60,6 +60,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.parseUrl();
     this.subscribeToListener()
     this.getLocalStorage();   
 
@@ -82,7 +83,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           // check if url contains group_id
           if (!this.group_id || this.group_id){
             this.group_id = parsedMessage.group_id;
-            localStorage.setItem('group_id', this.group_id);
+            this.localstorageSetGroupId(this.group_id);
           }
           this.storeService.updateGroupId(this.group_id);        
           this.websocketService.sendMessage(JSON.stringify({
@@ -179,6 +180,27 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
   }
 
+  localstorageSetGroupId(group_id:any){
+    localStorage.setItem('group_id ', group_id);
+  }
+
+  parseUrl(){
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      let stringGID = urlParams.get('group_id');
+      let group_param = stringGID?.slice(0, -1);
+      console.log('parse url group id: ', group_param)
+
+      if (group_param != null && group_param!= 'undefined'){
+        console.log('set group id: ', group_param)
+        this.group_id = group_param;
+        this.localstorageSetGroupId(group_param); 
+        this.storeService.updateGroupId(group_param);
+      }
+
+    } catch (error) {}
+  }
+
 
   getLocalStorage(){  
     console.log('-----------------------------------')
@@ -214,12 +236,6 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   }
 
-  setLocalStorage(){
-    console.log('set local storage: ', this.group_id, this.user_id, this.username)
-    localStorage.setItem('group_id', this.group_id);
-    localStorage.setItem('user_id', this.user_id);
-  }
-
   build_players(parsedPlayers:any){
     this.players = [];
     console.log('build players: ', parsedPlayers);
@@ -229,6 +245,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.players.push(newPlayer);
     });
   }
+
+
 
   startCountdown(average:any): void {
     console.log('start countdown')
@@ -326,6 +344,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.selectedCardElement.classList.remove("scroll-selection-selected");
     } catch (error) {}
   }
+
+
 
 
 }
