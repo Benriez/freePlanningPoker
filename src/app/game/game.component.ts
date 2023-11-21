@@ -315,12 +315,14 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   changeUsername(userId: typeof uuidv4){
+    console.log('change username')
     if (userId === this.user_id) {
       const dialogRef = this.dialog.open(ModalChangeNameComponent, {
         data: { title: 'Change Username', username: this.username },
         width: '500px',
       });
     }
+    console.log(this.username)
   }
 
   revealCards(){
