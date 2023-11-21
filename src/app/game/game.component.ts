@@ -30,6 +30,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   countdownInterval: any;
   buttonElement: any;
   buttonLabelElement: any;
+  wsOpen: boolean = false;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -59,12 +60,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.storeService.userId$.subscribe((data) => {
-      this.user_id = data;
-    })
-    this.subscribeToUsername()
-
-    this.parseUrl();
+    this.subscribeToListener()
     this.getLocalStorage();   
 
 
@@ -80,30 +76,33 @@ export class GameComponent implements OnInit, AfterViewInit {
       next: (message: string) => {
         const parsedMessage = JSON.parse(message);
         this.messagetype = parsedMessage.message;
-
+        console.log('message: ', parsedMessage)
         //-----------------------------------------------------------------------
         if(this.messagetype == "ws-connection-established"){
           // check if url contains group_id
           if (!this.group_id || this.group_id){
             this.group_id = parsedMessage.group_id;
+            console.log('game group id: ', this.group_id);
             localStorage.setItem('group_id', this.group_id);
           }
-          this.storeService.updateGroupId(this.group_id);          
+          this.storeService.updateGroupId(this.group_id);        
           this.websocketService.sendMessage(JSON.stringify({
             message: "user-joins-group", 
             group_id: this.group_id,
             username: this.username,
             user_id: this.user_id
           }));
-          // this.setLocalStorage();          
+          // this.setLocalStorage();   
         }
 
         if(this.messagetype == "ws-user-joins-group" || this.messagetype == "ws_waiting_for_players" || this.messagetype == "ws_user_leaves_group" || this.messagetype == "ws_user_update"){    
+          console.log(parsedMessage)    
           this.build_players(parsedMessage.players)
         }
 
         if(this.messagetype == "ws_start_game"){    
           console.log('lets fucking gooo')
+          console.log(parsedMessage)
           this.build_players(parsedMessage.players)
           this.startCountdown(parsedMessage.average);
    
@@ -123,6 +122,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         console.log('WebSocket connection closed');
       }
     });
+
   }
 
 
@@ -130,16 +130,19 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.websocketService.closeConnection();
   }
 
-  subscribeToUsername(){
+  subscribeToListener(){
+    this.storeService.wsOpen$.subscribe((data) => {
+      this.wsOpen = data;
+      this.handleWsOpen()
+    })
+    this.storeService.userId$.subscribe((data) => {
+      this.user_id = data;
+    })
+
     this.storeService.username$.subscribe((data) => {
       if (this.username != data){
         //update players
         this.username = data;
-        this.players.forEach((player: Player) => {
-          if (player.user_id == this.user_id){
-            player.username = this.username;
-          }
-        })
 
         //update websocket
         this.websocketService.sendMessage(JSON.stringify({
@@ -155,42 +158,61 @@ export class GameComponent implements OnInit, AfterViewInit {
     });
   }
 
-  parseUrl(){
-    console.log('parse url')
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      let stringGID = urlParams.get('group_id');
-      this.group_id = stringGID?.slice(0, -1);
-      localStorage.setItem('group_id', this.group_id);
-    } catch (error) {}
+  handleWsOpen(){
+    if (this.group_id == null && this.wsOpen){
+      console.log('user has no group << ask ws for group')
+      this.websocketService.sendMessage(JSON.stringify({
+        message: "init-user", 
+        group_id: 'default',
+        username: this.username,
+        user_id: this.user_id,
+        card: null
+      }));
+    } else if (this.group_id != null && this.wsOpen){
+      console.log('user has group << try joining group')
+      this.websocketService.sendMessage(JSON.stringify({
+        message: "init-user", 
+        group_id: this.group_id,
+        username: this.username,
+        user_id: this.user_id,
+        card: null
+      }));
+    }
   }
 
-  getLocalStorage(){
-    if (!this.group_id || this.group_id == 'undefined'){
-      console.log('no group id')
-      try {
-        this.group_id = localStorage.getItem('group_id');
-        let local_user = localStorage.getItem('user_id');
 
-        if (local_user !== null && local_user !== 'null') {
-          this.user_id = local_user;
-        }  
-      }
-      catch (error) {}
-
+  getLocalStorage(){  
+    console.log('-----------------------------------')
+    console.log('get local storage:')
+    let local_group = localStorage.getItem('group_id');
+    if (local_group != null) {
+      console.log('group found in local storage')
+      this.group_id = local_group;
+      this.storeService.updateGroupId(this.group_id); 
     } else {
-      console.log('has group id')
-      console.log('group id: ', this.group_id)
-      let local_user = localStorage.getItem('user_id');
-      if (local_user !== null && local_user !== 'null') {
-        this.user_id = local_user;
-      }
+      console.log('no group found in local storage: ', this.group_id)
     }
-    this.storeService.updateUserId(this.user_id); 
 
+    let local_user = localStorage.getItem('user_id');
+    if (local_user !== null && local_user !== 'null' && local_user !== 'undefined') {
+      this.user_id = local_user;
+      this.storeService.updateUserId(this.user_id); 
+      console.log('user found in local storage: ', this.user_id)
+    } else {
+      console.log('no user found in local storage: ', this.user_id)
+      this.user_id = uuidv4();
+      console.log('create uuid: ', this.user_id)
+      this.storeService.updateUserId(this.user_id);
+      localStorage.setItem('user_id', this.user_id);
+    }
+    
+  
     try{
       this.username = localStorage.getItem('username') || "Player";
     } catch (error) {}
+
+    console.log('-----------------------------------')
+
   }
 
   setLocalStorage(){
@@ -287,7 +309,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   resetCards(){
     console.log("Reset Cards");
     this.websocketService.sendMessage(JSON.stringify({
-      message: "reset-game", 
+      message: "reset-game",
+      group_id: this.group_id, 
     }));
   }
 
