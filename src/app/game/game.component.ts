@@ -181,7 +181,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   localstorageSetGroupId(group_id:any){
-    localStorage.setItem('group_id ', group_id);
+    localStorage.setItem('group_id', group_id);
   }
 
   parseUrl(){
@@ -212,6 +212,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.storeService.updateGroupId(this.group_id); 
     } else {
       console.log('no group found in local storage: ', this.group_id)
+
     }
 
     let local_user = localStorage.getItem('user_id');
