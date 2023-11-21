@@ -24,7 +24,7 @@
       <div class="scroll-selection-row">
         <div *ngFor="let player of players" class="scroll-selection-player" 
           [ngStyle]="{
-            'border': player.user_id === this.user_id ? '1px solid green' : 'transparent',
+            'border': player.user_id === this.user_id ? '1px solid #00e200' : 'transparent',
             'background-color': player.card !== null ? 'green' : 'transparent'
           }"
           (click)="changeUsername(player.user_id)">

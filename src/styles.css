@@ -1,6 +1,6 @@
 @import 'ngx-toastr/toastr';
 /* You can add global styles to this file, and also import other style files */
-html, body { height: 100%; background-color: #0e1011; color: white;}
+html, body { height: 100%; background-color: rgb(0, 2, 2); color: white;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .custom-toastr-position {
