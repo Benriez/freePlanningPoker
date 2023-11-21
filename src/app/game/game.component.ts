@@ -332,6 +332,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     console.log("Reset Cards");
     this.websocketService.sendMessage(JSON.stringify({
       message: "reset-game",
+      user_id: this.user_id,
       group_id: this.group_id, 
     }));
   }
