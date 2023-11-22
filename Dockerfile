@@ -9,6 +9,6 @@ RUN npm run build
 ### STAGE 2: Run ###
 FROM nginx:alpine
 
-COPY --from=build /usr/src/app/dist/homepage /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/free-planning-poker /usr/share/nginx/html
 
 EXPOSE 80
