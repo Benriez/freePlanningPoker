@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalChangeNameComponent } from '../modal-change-name/modal-change-name.component';
-
+import { environment } from '../../environments/environment';
 interface Player {
   user_id: typeof uuidv4;
   username: string;
@@ -60,6 +60,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    console.log(environment.BASE_URL)
     this.parseUrl();
     this.subscribeToListener()
     this.getLocalStorage();   

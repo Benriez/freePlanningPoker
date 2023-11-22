@@ -31,6 +31,7 @@ export class ModalAddUserLinkComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('modal add user link')
     this.storeService.groupId$.subscribe((data) => {
       this.groupId = data;
       this.invitationLink = this.base_link + this.groupId + '/'
