@@ -3,7 +3,12 @@
     <h3 style="user-select: none;">{{ title }}</h3>
 
     <mat-form-field appearance="outline" style="width: 100%;">
-      <input matInput #usernameInput placeholder="{{ username }}" class="custom-input">
+      <input 
+            matInput 
+            #usernameInput 
+            placeholder="{{ username }}" 
+            class="custom-input"
+            (keydown.enter)="changeUsername(usernameInput.value); close()">
     </mat-form-field>
     <button mat-button (click)="changeUsername(usernameInput.value)" style="width: 100%; margin-top: 1rem; color: #fff;">Save Changes</button>
   </div>
