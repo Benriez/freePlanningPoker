@@ -60,8 +60,6 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.log(environment.BASE_URL)
-    console.log(environment.WS_URL)
     this.parseUrl();
     this.subscribeToListener()
     this.getLocalStorage();   
