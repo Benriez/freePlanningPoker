@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class WebsocketService {
   private socket!: WebSocket;
-  private readonly serverUrl = "wss://ffp-django.cloud.code-server.de/ws/";
+  private readonly serverUrl = environment.WS_URL;
   user_id: any = uuidv4();
   group_id: any = null;
 
