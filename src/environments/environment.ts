@@ -3,6 +3,7 @@ export const environment = {
   // WS_URL:'ws://127.0.0.1:8000/ws/',
   // BASE_URL:'http://localhost:4200/'
   WS_URL:'wss://ffp-django.cloud.code-server.de/ws/',
-  BASE_URL:'https://ffp-django.cloud.code-server.de/'
+  BASE_URL:'https://ffp-django.cloud.code-server.de/',
+  BASE_APP_URL:'https://ffp-app.cloud.code-server.de/'
 };
 

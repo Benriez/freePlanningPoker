@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalAddUserLinkComponent } from '../modal-add-user-link/modal-add-user-link.component';
 import { StoreService } from '../store.service';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
@@ -22,7 +23,7 @@ export class NavComponent implements OnInit{
 
   add_user():void{
     const dialogRef = this.dialog.open(ModalAddUserLinkComponent, {
-      data: { title: 'Invite Players', url: 'http://localhost:4200/?group_id='+this.groupId+'/' },
+      data: { title: 'Invite Players', url: environment.BASE_APP_URL+'?group_id='+this.groupId+'/' },
       width: '500px',
     });
 

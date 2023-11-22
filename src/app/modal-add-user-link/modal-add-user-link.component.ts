@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 export class ModalAddUserLinkComponent implements OnInit {
   groupId!: string;
   url_prameter='?group_id='
-  base_link = environment.BASE_URL+this.url_prameter;
+  base_link = environment.BASE_APP_URL+this.url_prameter;
   invitationLink = '';
 
   

@@ -19,7 +19,7 @@ export class WebsocketService {
 
   public openConnection(): Observable<any> {
     this.socket = new WebSocket(this.serverUrl);
-    console.log('ws open connection')
+    console.log('ws open connection: ', this.serverUrl)
     return new Observable(observer => {
       this.socket.addEventListener('open', () => {
         console.log('ws open')
