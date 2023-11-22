@@ -26,7 +26,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   gameStatus : any;
   group_id: any= null;
   user_id: any = uuidv4();
-  countdown: number = 5; 
+  countdown: number = 4; 
   countdownInterval: any;
   buttonElement: any;
   buttonLabelElement: any;
@@ -277,9 +277,18 @@ export class GameComponent implements OnInit, AfterViewInit {
     clearInterval(this.countdownInterval);
     this.renderer.setProperty(buttonLabelElement, 'textContent', average);
     this.renderer.setStyle(buttonLabelElement, 'font-size', '2rem');
+    this.showCards();
 
     const restartBtn = document.getElementById('restartBtn');
     restartBtn?.style.setProperty('display', 'block');
+  }
+
+  showCards(){
+    const cardsClass = document.getElementsByClassName('player-cards-value');
+    for (let i = 0; i < cardsClass.length; i++) {
+      const element = cardsClass[i] as HTMLElement;
+      element.style.setProperty('display', 'block');
+    }
   }
 
 
