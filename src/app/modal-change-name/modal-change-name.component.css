@@ -10,3 +10,27 @@
 ::ng-deep .custom-input {
   border-color: #fff!important; /* Change to your desired border color */
 }
+
+.mat-mdc-slide-toggle{
+  --mdc-switch-selected-focus-state-layer-color: #5eab39!important;
+  --mdc-switch-selected-handle-color: #3cab39!important;
+  --mdc-switch-selected-hover-state-layer-color: #39ab39!important;
+  --mdc-switch-selected-pressed-state-layer-color: #39ab42!important;
+  --mdc-switch-selected-focus-handle-color: #1a7e30!important;
+  --mdc-switch-selected-hover-handle-color: #217e1a!important;
+  --mdc-switch-selected-pressed-handle-color: #1a7e1c!important;
+  --mdc-switch-selected-focus-track-color: #79cb7f!important;
+  --mdc-switch-selected-hover-track-color: #79cb86!important;
+  --mdc-switch-selected-pressed-track-color: #82cb79!important;
+  --mdc-switch-selected-track-color: #7dcb79!important;
+  --mdc-switch-disabled-selected-handle-color: #424242!important;
+  --mdc-switch-disabled-selected-icon-color: #fff!important;
+  --mdc-switch-disabled-selected-track-color: #424242!important;
+  --mdc-switch-disabled-unselected-handle-color: #424242!important;
+  --mdc-switch-disabled-unselected-icon-color: #fff!important;
+  --mdc-switch-disabled-unselected-track-color: #424242!important;
+}
+
+::ng-deep .mdc-label {
+  color: #838383!important; /* Set your desired text color */
+}

@@ -14,11 +14,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalAddUserLinkComponent } from './modal-add-user-link/modal-add-user-link.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalChangeNameComponent } from './modal-change-name/modal-change-name.component';
-
 
 
 @NgModule({
@@ -37,6 +37,7 @@ import { ModalChangeNameComponent } from './modal-change-name/modal-change-name.
     MatTooltipModule,
     MatButtonModule,
     MatDialogModule,
+    MatSlideToggleModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       toastClass: 'custom-toastr-position', // Apply custom styling

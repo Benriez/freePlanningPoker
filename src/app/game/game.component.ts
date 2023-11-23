@@ -31,6 +31,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   buttonElement: any;
   buttonLabelElement: any;
   wsOpen: boolean = false;
+  userCanSelectCard: boolean = true;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -104,6 +105,7 @@ export class GameComponent implements OnInit, AfterViewInit {
           console.log('lets fucking gooo')
           console.log(parsedMessage)
           this.build_players(parsedMessage.players)
+          this.userCanSelectCard =false
           this.startCountdown(parsedMessage.average);
    
         }
@@ -111,6 +113,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         if(this.messagetype == "ws_reset_game"){    
           this.reset_ui()
           this.build_players(parsedMessage.players)
+          this.userCanSelectCard = true
 
         }
 
@@ -294,40 +297,43 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   
   select_card(cardElement: HTMLElement, value: any){
-    // remove selected class from previous card
-    if (cardElement != this.selectedCardElement){
-      try {
-        this.selectedCardElement.classList.remove("scroll-selection-selected");
-      } catch (error) {}
-    } 
-    // add selected class to new card
-    this.selectedCardElement = cardElement;
-    this.selectedCardElement.classList.add("scroll-selection-selected");
-    
-    // change button style
-    if (this.buttonElement) {
-      if (this.buttonLabelElement) {
-        this.renderer.setProperty(this.buttonLabelElement, 'textContent', 'Waiting for other players...');
+    if (this.userCanSelectCard){
+      // remove selected class from previous card
+      if (cardElement != this.selectedCardElement){
+        try {
+          this.selectedCardElement.classList.remove("scroll-selection-selected");
+        } catch (error) {}
+      } 
+      // add selected class to new card
+      this.selectedCardElement = cardElement;
+      this.selectedCardElement.classList.add("scroll-selection-selected");
+      
+      // change button style
+      if (this.buttonElement) {
+        if (this.buttonLabelElement) {
+          this.renderer.setProperty(this.buttonLabelElement, 'textContent', 'Waiting for other players...');
+        }
       }
-    }
-    this.buttonElement.disabled = false;
-    this.gameStatus.style.backgroundColor = "rgb(0, 212, 51)";
+      this.buttonElement.disabled = false;
+      this.gameStatus.style.backgroundColor = "rgb(0, 212, 51)";
 
-    // send message to websocket
-    this.websocketService.sendMessage(JSON.stringify({
-      message: "user-card-selected",
-      group_id: this.group_id,
-      user_id: this.user_id, 
-      card: value
-    }));
+      // send message to websocket
+      this.websocketService.sendMessage(JSON.stringify({
+        message: "user-card-selected",
+        group_id: this.group_id,
+        user_id: this.user_id, 
+        card: value
+      }));
+    }
+
 
   }
 
-  changeUsername(userId: typeof uuidv4){
+  updateUser(userId: typeof uuidv4){
     console.log('change username')
     if (userId === this.user_id) {
       const dialogRef = this.dialog.open(ModalChangeNameComponent, {
-        data: { title: 'Change Username', username: this.username },
+        data: { title: 'Update User', username: this.username },
         width: '500px',
       });
     }
@@ -351,7 +357,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.renderer.setProperty(this.buttonLabelElement, 'textContent', 'Pick youre Cards!');
     const restartBtn = document.getElementById('restartBtn');
     restartBtn?.style.setProperty('display', 'none');
-    this.gameStatus.style.backgroundColor = "transparent";
+    this.gameStatus.style.backgroundColor = "#f0f8ff0d!important;";
 
     try {
       this.selectedCardElement.classList.remove("scroll-selection-selected");

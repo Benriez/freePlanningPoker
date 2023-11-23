@@ -24,7 +24,7 @@ export class NavComponent implements OnInit{
   add_user():void{
     const dialogRef = this.dialog.open(ModalAddUserLinkComponent, {
       data: { title: 'Invite Players', url: environment.BASE_APP_URL+'?group_id='+this.groupId+'/' },
-      width: '500px',
+      width: '800px',
     });
 
     dialogRef.afterClosed().subscribe(result => {

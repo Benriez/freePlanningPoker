@@ -35,8 +35,18 @@ export class ModalChangeNameComponent implements OnInit {
     // });
   }
 
-  changeUsername(username: string): void {
-    console.log('New username:', username);
+  updateUser(username: string): void {
+    if (username === '' || username === this.username) {
+      this.dialogRef.close();
+      return;
+    } else if (username.length > 10) {
+      this.toastr.error('Username must be at most 10 characters long', 'Error!');
+      return;
+    } else if (!username.match(/^[a-zA-Z0-9]+$/)) {
+      this.toastr.error('Username must contain only letters and numbers', 'Error!');
+      return;
+    } 
+
     this.storeService.updateUsername(username);
     localStorage.setItem('username', username);
     this.dialogRef.close();

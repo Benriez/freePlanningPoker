@@ -8,9 +8,14 @@
             #usernameInput 
             placeholder="{{ username }}" 
             class="custom-input"
-            (keydown.enter)="changeUsername(usernameInput.value); close()">
+            (keydown.enter)="updateUser(usernameInput.value); close()">
     </mat-form-field>
-    <button mat-button (click)="changeUsername(usernameInput.value)" style="width: 100%; margin-top: 1rem; color: #fff;">Save Changes</button>
+    <mat-slide-toggle disabled><p style="margin-left: .5rem;">Enable Scrum Master Mode</p></mat-slide-toggle>
+
+    <button mat-button (click)="updateUser(usernameInput.value)" style="width: 100%; margin-top: 1rem; background-color: #f0f8ff17!important; color: aliceblue;">
+      <p>Save Changes</p>
+      <mat-icon mat-button mat-list-icon matTooltip="Settings">save</mat-icon>
+    </button>
   </div>
   <button mat-button (click)="close()" style="position: absolute; top: 0; right: 0;color: #fff;">X</button>
 </div>

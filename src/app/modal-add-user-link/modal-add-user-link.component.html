@@ -1,8 +1,13 @@
 <div style="display: flex; margin: 1rem 2rem; border-radius: 0.5rem;">
-  <div style="width: 100%;">
+
+  <div style="width: 100%; padding: .5rem;">
     <h3 style="user-select: none;">{{ title }}</h3>
     <p>{{ url }}</p>
-    <button mat-button (click)="copyToClipboard()" style="width: 100%; margin-top: 1rem;">Copy invitation link</button>
+    <button mat-button (click)="copyToClipboard()" style="width: 100%; margin-top: 1rem;background-color: #f0f8ff17!important; color: aliceblue;">
+      <p>Copy invitation link</p>
+      <mat-icon mat-button mat-list-icon matTooltip="Settings">copy_all</mat-icon>
+    </button>
   </div>
-  <button mat-button (click)="close()" style="position: absolute; top: 0; right: 0;">X</button>
+  <button mat-button (click)="close()" style="position: absolute; top: 0; right: 0; color: aliceblue;">X</button>
+
 </div>
