@@ -82,6 +82,33 @@
   
 }
 
+.footer-lg{
+  display: none;
+  font-size: .6rem; 
+  color: rgb(192 226 255 / 19%);
+}
+
+.footer-sm{
+  display: block;
+  position: absolute; 
+  bottom: 0; 
+  text-align: center; 
+  width: 100%; 
+  font-size: .6rem; 
+  color: rgb(192 226 255 / 19%);
+}
+
+@media (min-width: 530px) {
+  .footer-lg{
+    display: block;
+
+  }
+  .footer-sm{
+    display: none;
+  }
+}
+
+
 
 
 @media (max-width: 768px) {
