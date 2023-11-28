@@ -38,7 +38,8 @@ const INITIAL_COUNTDOWN_VALUE = 4;
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit, AfterViewInit {
-  cards = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89 , '?', '☕️'];
+  cards = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100, '?', '☕️'];
+  // [0, 1/2, 1, 2, 3, 5, 8, 13, 20, 40, 100, '?', '☕️']
   username: string = "Player";
   players: Player[] = [];
   selectedCardElement!: HTMLElement;
