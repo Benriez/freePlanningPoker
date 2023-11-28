@@ -51,6 +51,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   buttonLabelElement: any;
   wsOpen: boolean = false;
   userCanSelectCard: boolean = true;
+  remove_group: boolean = false;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -349,14 +350,26 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   updateUser(userId: typeof uuidv4){
-    console.log('change username')
-    if (userId === this.user_id) {
-      const dialogRef = this.dialog.open(ModalChangeNameComponent, {
-        data: { title: 'Update User', username: this.username },
-        width: '500px',
-      });
+    if (!this.remove_group){
+      console.log('change username')
+      if (userId === this.user_id) {
+        const dialogRef = this.dialog.open(ModalChangeNameComponent, {
+          data: { title: 'Update User', username: this.username },
+          width: '500px',
+        });
+      }
+      console.log(this.username)
     }
-    console.log(this.username)
+
+  }
+
+  removeGroup(userId: typeof uuidv4){
+    this.remove_group = true
+    console.log('remove group: ', this.group_id)
+    setTimeout(() => {
+      this.remove_group = false
+    }, 1000);
+    
   }
 
   revealCards(){

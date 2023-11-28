@@ -40,7 +40,7 @@
     <p style="text-align: center;user-select: none;">Players ({{players.length}}):</p>
     <div class="scroll-selection-wrapper">
       <div class="scroll-selection-row">
-        <div *ngFor="let player of players" class="scroll-selection-player" 
+        <div *ngFor="let player of players" class="scroll-selection-player" style="position: relative;" 
           [ngStyle]="{
             'border': player.user_id === this.user_id ? '1px solid #00e200' : 'transparent',
             'background-color': player.card !== null ? 'green' : 'transparent'
@@ -48,6 +48,11 @@
           (click)="updateUser(player.user_id)">
           {{ player.username }}
           <div class="player-cards-value" style="margin-top: 0.5rem; display: none;">{{ player.card }}</div>
+          
+          <div *ngIf="player.user_id === this.user_id && this.players.length > 0" (click)="removeGroup(player.user_id)" class="remove-group" matTooltip="Remove you from this group">
+            <mat-icon>cancel</mat-icon>
+          </div>
+
         </div>    
         
       </div>
