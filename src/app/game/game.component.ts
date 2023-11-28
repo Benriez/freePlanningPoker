@@ -52,6 +52,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   wsOpen: boolean = false;
   userCanSelectCard: boolean = true;
   remove_group: boolean = false;
+  urlParams: any;
 
   socketSubscription!: Subscription;
   public messagetype: string | undefined;
@@ -209,8 +210,8 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   parseUrl(){
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      let stringGID = urlParams.get('group_id');
+      this.urlParams = new URLSearchParams(window.location.search);
+      let stringGID = this.urlParams.get('group_id');
       let group_param = stringGID?.slice(0, -1);
       console.log('parse url group id: ', group_param)
 
@@ -373,6 +374,11 @@ export class GameComponent implements OnInit, AfterViewInit {
       username: this.username,
       user_id: this.user_id
     }));
+
+    if (this.urlParams.has('group_id')){
+      const urlWithoutGroupId = window.location.href.replace(/[\?&]group_id=[^&]+/, '');
+      window.history.replaceState({}, '', urlWithoutGroupId);
+    }
 
     setTimeout(() => {
       this.websocketService.sendMessage(JSON.stringify({
