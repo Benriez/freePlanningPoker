@@ -1,6 +1,7 @@
 # FreePlanningPoker
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.0.
+Try it out on `https://free-planning-poker.cloud.code-server.de/`
 
 ## Development server
 

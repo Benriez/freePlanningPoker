@@ -19,7 +19,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalChangeNameComponent } from './modal-change-name/modal-change-name.component';
-
+import { Location } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -44,7 +44,7 @@ import { ModalChangeNameComponent } from './modal-change-name/modal-change-name.
       // Other configuration options...
     })
   ],
-  providers: [],
+  providers: [Location],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

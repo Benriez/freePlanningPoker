@@ -17,11 +17,13 @@
  * along with MyLibrary. If not, see <http://www.gnu.org/licenses/>.
  */ 
 import { Injectable} from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { StoreService } from './store.service';
 //import environment variables
 import { environment } from '../environments/environment';
 import { v4 as uuidv4 } from 'uuid';
+import { Location } from '@angular/common';
+import { switchMap, takeWhile, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -32,28 +34,49 @@ export class WebsocketService {
   user_id: any = uuidv4();
   group_id: any = null;
 
-  constructor(public storeService: StoreService) {}
+  constructor(public storeService: StoreService, private location: Location) {}
 
 
   public openConnection(): Observable<any> {
     this.socket = new WebSocket(this.serverUrl);
-    console.log('ws open connection: ', this.serverUrl)
-    return new Observable(observer => {
+    const reconnectSubject = new Subject();
+  
+    const createWebSocket = () => {
+      this.socket = new WebSocket(this.serverUrl);
+  
       this.socket.addEventListener('open', () => {
-        console.log('ws open')
-        this.storeService.updateWs(true);        
+        console.log('ws open');
+        this.storeService.updateWs(true);
       });
-
+  
       this.socket.addEventListener('message', (event: MessageEvent) => {
-        observer.next(event.data);
+        reconnectSubject.next(event.data);
       });
-
+  
       this.socket.addEventListener('close', (event: CloseEvent) => {
-        observer.complete();
+        console.log('ws close');
+        reconnectSubject.complete();
       });
-
+  
       this.socket.addEventListener('error', (event: Event) => {
-        observer.error('WebSocket error!');
+        console.error('WebSocket error!');
+        reconnectSubject.error('WebSocket error!');
+      });
+    };
+  
+    createWebSocket();
+  
+    return new Observable(observer => {
+      reconnectSubject.subscribe({
+        next: data => observer.next(data),
+        complete: () => {
+          // Reconnect logic using setTimeout
+          setTimeout(() => {
+            console.log('Attempting to reconnect...');
+            createWebSocket();
+          }, 3000); // Adjust the interval as needed
+        },
+        error: err => observer.error(err),
       });
     });
   }
@@ -68,19 +91,4 @@ export class WebsocketService {
     }
   }
 
-  // parseUrl(){
-  //   try {
-  //     const urlParams = new URLSearchParams(window.location.search);
-  //     let stringGID = urlParams.get('group_id');
-  //     this.group_id = stringGID?.slice(0, -1);
-  //     console.log('parse url group id: ', this.group_id)
-  //     console.log('wwwwwwwwhat')
-  //     if (this.group_id != null && this.group_id != 'undefined'){
-  //       console.log('set group id: ', this.group_id)
-  //       localStorage.setItem('group_id ', this.group_id);
-  //       this.storeService.updateGroupId(this.group_id);
-  //     }
-
-  //   } catch (error) {}
-  // }
 }
