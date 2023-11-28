@@ -60,23 +60,38 @@ export class WebsocketService {
   
       this.socket.addEventListener('error', (event: Event) => {
         console.error('WebSocket error!');
-        reconnectSubject.error('WebSocket error!');
+        // reconnectSubject.error('WebSocket error!');
+        reconnectSubject.complete();
       });
     };
   
     createWebSocket();
   
     return new Observable(observer => {
-      reconnectSubject.subscribe({
+      const subscription = reconnectSubject.subscribe({
         next: data => observer.next(data),
         complete: () => {
-          // Reconnect logic using setTimeout
-          setTimeout(() => {
+          // Reconnect logic using while loop
+          const reconnectInterval = 3000; // Adjust the interval as needed
+          let reconnecting = true;
+    
+          const reconnect = () => {
             console.log('Attempting to reconnect...');
             createWebSocket();
-          }, 3000); // Adjust the interval as needed
+    
+            setTimeout(() => {
+              reconnecting && reconnect(); // Continue reconnecting as long as the flag is true
+            }, reconnectInterval);
+          };
+    
+          reconnect();
+    
+          observer.complete = () => {
+            reconnecting = false; // Stop reconnecting when observer is completed
+            subscription.unsubscribe(); // Unsubscribe to avoid memory leaks
+          };
+    
         },
-        error: err => observer.error(err),
       });
     });
   }
