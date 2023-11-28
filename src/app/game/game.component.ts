@@ -31,7 +31,7 @@ interface Player {
   username: string;
   card?: number;
 }
-const INITIAL_COUNTDOWN_VALUE = 5;
+const INITIAL_COUNTDOWN_VALUE = 4;
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -366,9 +366,29 @@ export class GameComponent implements OnInit, AfterViewInit {
   removeGroup(userId: typeof uuidv4){
     this.remove_group = true
     console.log('remove group: ', this.group_id)
+
+    this.websocketService.sendMessage(JSON.stringify({
+      message: "user-leaves-group", 
+      group_id: this.group_id,
+      username: this.username,
+      user_id: this.user_id
+    }));
+
+    setTimeout(() => {
+      this.websocketService.sendMessage(JSON.stringify({
+        message: "init-user", 
+        group_id: 'default',
+        username: this.username,
+        user_id: this.user_id,
+        card: null
+      }));
+    }, 1000);
+
+
+
     setTimeout(() => {
       this.remove_group = false
-    }, 1000);
+    }, 1200);
     
   }
 
