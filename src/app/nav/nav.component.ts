@@ -51,5 +51,14 @@ export class NavComponent implements OnInit{
       
     });
   }
+
+  openSettings(){
+    console.log('openSettings');
+    document.getElementById('sidenav')?.style.setProperty('right', '0px');
+    
+    setTimeout(() => {
+      this.storeService.updateSideNav(true);
+    }, 100);
+  }
   
 }

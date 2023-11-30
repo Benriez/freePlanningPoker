@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalChangeNameComponent } from './modal-change-name/modal-change-name.component';
 import { Location } from '@angular/common';
+import { SidenavComponent } from './sidenav/sidenav.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { Location } from '@angular/common';
     NavComponent,
     GameComponent,
     ModalAddUserLinkComponent,
-    ModalChangeNameComponent
+    ModalChangeNameComponent,
+    SidenavComponent
   ],
   imports: [
     BrowserModule,

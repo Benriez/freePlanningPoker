@@ -10,13 +10,14 @@ export class StoreService {
   private usernameSubject = new BehaviorSubject<string>('Player'); // Initial state
   private userIdSubject = new BehaviorSubject<string>(''); // Initial state
   private wsOpenSubject = new BehaviorSubject<boolean>(false); // Initial state
-
+  private sideNavSubject = new BehaviorSubject<boolean>(false); // Initial state
   
 
   groupId$ = this.groupIdSubject.asObservable();
   username$ = this.usernameSubject.asObservable();
   userId$ = this.userIdSubject.asObservable();
   wsOpen$ = this.wsOpenSubject.asObservable();
+  sideNav$ = this.sideNavSubject.asObservable();
 
   updateGroupId(newData: string): void {
     this.groupIdSubject.next(newData);
@@ -32,5 +33,9 @@ export class StoreService {
 
   updateWs(newData: boolean): void {
     this.wsOpenSubject.next(newData);
+  }
+
+  updateSideNav(newData: boolean): void {
+    this.sideNavSubject.next(newData);
   }
 }
